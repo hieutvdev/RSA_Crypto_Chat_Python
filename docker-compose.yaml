@@ -1,0 +1,19 @@
+﻿version: '3.7'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: rsa_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: rsa_chat
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "4406:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+volumes:
+    mysql:
+
+
