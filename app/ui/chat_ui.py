@@ -25,12 +25,53 @@ class ChatUI:
         self.root.grid_columnconfigure(1, weight=1)
         self.root.grid_rowconfigure(0, weight=1)
 
-        # User listbox
+        # Fetch users
         self.users = self.user.get_group_user(self.logged_in_user[1])
-        self.user_listbox = tk.Listbox(left_frame, height=20, width=30)
+
+        # Tạo Frame chứa Listbox
+        user_list_frame = tk.Frame(left_frame, bg="#f5f5f5", padx=10, pady=10)
+        user_list_frame.grid(row=0, column=0, sticky="ns")
+
+        # Tiêu đề cho danh sách người dùng
+        user_list_label = tk.Label(
+            user_list_frame,
+            text="Danh sách người dùng",
+            font=("Helvetica", 14, "bold"),
+            bg="#f5f5f5",
+            fg="#333"
+        )
+        user_list_label.pack(anchor="w", pady=(10))
+
+        # Create Scrollbar and Listbox
+        listbox_frame = tk.Frame(user_list_frame, bg="#f5f5f5", padx=5, pady=5)
+        listbox_frame.pack(fill=tk.BOTH, expand=True)
+
+        scrollbar = tk.Scrollbar(listbox_frame, orient=tk.VERTICAL)
+        self.user_listbox = tk.Listbox(
+            listbox_frame,
+            height=20,
+            width=30,
+            font=("Helvetica", 12),
+            bg="white",
+            fg="black",
+            selectbackground="#57a1f8",
+            selectforeground="white",
+            yscrollcommand=scrollbar.set,
+            borderwidth=2,
+            relief=tk.GROOVE,
+            justify=tk.CENTER
+        )
+        scrollbar.config(command=self.user_listbox.yview)
+
+        # Add users to Listbox
         for user in self.users:
             self.user_listbox.insert(tk.END, user[1])
-        self.user_listbox.grid(row=0, column=0)
+
+        # Display Listbox and Scrollbar
+        self.user_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Bind event for selecting user in Listbox
         self.user_listbox.bind("<<ListboxSelect>>", self.load_chat)
 
         # Message entry and buttons
@@ -40,7 +81,6 @@ class ChatUI:
                                       fg="black",
                                       border=2,
                                         relief=tk.FLAT,
-
                                       highlightcolor="blue",
                                       width=50, font=("Arial", 12))
         self.message_entry.grid(row=0, column=1, pady=(10, 5))
