@@ -2,17 +2,21 @@ import tkinter as tk
 from tkinter import messagebox
 from app.adapters.db.dao.user import User
 from tkinter import ttk
-class LoginUI:
+import os
+from PIL import Image, ImageTk
+
+
+class LoginUI():
     def __init__(self, root):
         self.root = root
         self.root.title("Login")
-        self.root.geometry("350x500")  # Adjusted size for single-column layout
-        self.center_window(350, 500)  # Center the window
+        self.root.geometry("925x500+300+200")
+        self.root.resizable(False, False)
+        self.root.configure(bg="white")
         self.user = User()
         self.create_login_ui()
 
     def center_window(self, width, height):
-
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         x = (screen_width - width) // 2
@@ -20,35 +24,50 @@ class LoginUI:
         self.root.geometry(f"{width}x{height}+{x}+{y}")
 
     def create_login_ui(self):
-        frame = tk.Frame(self.root, padx=5, pady=0)
+        frame = tk.Frame(self.root, padx=20, pady=20, bg="white")
         frame.pack(expand=True)
+        img_path = os.path.abspath(os.path.join("images", "login.png"))
+
+        # Open and resize the image using Pillow
+        img = Image.open(img_path)
+        img = img.resize((400, 350), Image.LANCZOS)  # Adjust the size as needed
+        self.img = ImageTk.PhotoImage(img)  # Convert to PhotoImage
+
+        # Create a sub-frame for centering the content
+        sub_frame = tk.Frame(frame, bg="white")
+        sub_frame.pack(expand=True)
+
+        # Image on the left
+        tk.Label(sub_frame, image=self.img, bg="white").grid(row=0, column=0, rowspan=6, padx=10, pady=10, sticky="w")
 
         # Fonts
-        font_label = ("Helvetica", 10)
-        font_entry = ("Helvetica", 10)
-        font_button = ("Helvetica", 10, "bold")
+        font_label = ("Helvetica", 12)
+        font_entry = ("Helvetica", 12)
+        font_button = ("Helvetica", 12, "bold")
+
+        heading = tk.Label(sub_frame, text="Sign in", fg="#57a1f8", bg="white",
+                           font=("Microsoft YaHei UI Light", 23, "bold"))
+        heading.grid(row=0, column=1, columnspan=2, pady=10, sticky="w")
 
         # Username
-        tk.Label(frame, text="Username:", font=font_label).pack(anchor="w", pady=1)
-        self.username_entry = ttk.Entry(frame, font=font_entry, width=35)
-        self.username_entry.pack(fill="x", pady=0, ipady=8)
-
-        # Add Canvas for underline effect
-        canvas = tk.Canvas(frame, height=1, bg='gray', bd=0, highlightthickness=0)
-        canvas.pack(fill='x', pady=0)
+        tk.Label(sub_frame, text="Username: ", font=font_label, bg="white").grid(row=1, column=1, pady=10, sticky="e")
+        self.username_entry = ttk.Entry(sub_frame, font=font_entry, width=35)
+        self.username_entry.grid(row=1, column=2, pady=10, ipady=8, sticky="we")
 
         # Password
-        tk.Label(frame, text="Password:", font=font_label).pack(anchor="w", pady=5)
-        self.password_entry = ttk.Entry(frame, font=font_entry, width=35, show="*")
-        self.password_entry.pack(fill="x", pady=0, ipady=8)
-
-        # Add Canvas for underline effect
-        canvas = tk.Canvas(frame, height=1, bg='gray', bd=0, highlightthickness=0)
-        canvas.pack(fill='x', pady=0)
+        tk.Label(sub_frame, text="Password: ", font=font_label, bg="white").grid(row=2, column=1, pady=10, sticky="e")
+        self.password_entry = ttk.Entry(sub_frame, font=font_entry, width=35, show="*")
+        self.password_entry.grid(row=2, column=2, pady=10, ipady=8, sticky="we")
 
         # Buttons
-        tk.Button(frame, text="Login", command=self.login, font=font_button, width=15).pack(pady=5)
-        tk.Button(frame, text="Register", command=self.open_register_ui, font=font_button, width=15).pack(pady=5)
+        button_style = {"font": font_button, "bg": "#57a1f8", "fg": "white", "padx": 10, "pady": 5, "bd": 3,
+                        "relief": "raised"}
+        tk.Button(sub_frame, text="Login", command=self.login, width=35, **button_style).grid(row=3, column=2, pady=0,
+                                                                                              sticky="e")
+        tk.Label(sub_frame, text="Don't have an account?", fg='black', bg="white",
+                 font=("Microsoft YaHei UI Light", 12)).grid(row=4, column=2, pady=0, sticky="w")
+        tk.Button(sub_frame, text="Register", command=self.open_register_ui, **button_style).grid(row=4, column=2,
+                                                                                                  pady=10, sticky="e")
 
     def login(self):
         username = self.username_entry.get()

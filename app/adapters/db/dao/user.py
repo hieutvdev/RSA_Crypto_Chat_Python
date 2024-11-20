@@ -10,7 +10,7 @@ class User:
 
     def login(self, username, password):
         try:
-            query = "SELECT * FROM users WHERE username = %s AND password = %s"
+            query = "SELECT * FROM Users WHERE username = %s AND password = %s"
             self.cursor.execute(query, (username, password))
             result = self.cursor.fetchone()
             if result:
@@ -23,7 +23,7 @@ class User:
     def register(self, username, password, email):
         try:
             public_key, private_key = generate_keypair()
-            query = "INSERT INTO users (username, email, password, public_key, private_key) VALUES (%s, %s, %s, %s, %s)"
+            query = "INSERT INTO Users (username, email, password, public_key, private_key) VALUES (%s, %s, %s, %s, %s)"
             self.cursor.execute(query, (username, email, password, str(public_key), str(private_key)))
             self.connection.commit()
             return self.cursor.lastrowid
@@ -33,7 +33,7 @@ class User:
 
     def get_group_user(self, username):
         try:
-            query = "SELECT * FROM users WHERE username != %s"
+            query = "SELECT * FROM Users WHERE username != %s"
             self.cursor.execute(query, (username,))
             result = self.cursor.fetchall()
             return result
