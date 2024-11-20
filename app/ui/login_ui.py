@@ -10,9 +10,9 @@ class LoginUI():
     def __init__(self, root):
         self.root = root
         self.root.title("Login")
-        self.root.geometry("925x500+300+200")  # Adjusted size for single-column layout
-        self.root.resizable(False, False)  # Disable resizing
-        self.root.configure(bg="white")  # Set background color
+        self.root.geometry("925x500+300+200")
+        self.root.resizable(False, False)
+        self.root.configure(bg="white")
         self.user = User()
         self.create_login_ui()
 

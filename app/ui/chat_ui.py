@@ -3,6 +3,7 @@ from tkinter import messagebox, filedialog
 from app.adapters.db.dao.user import User
 import os
 from app.core.rsa import encrypt, decrypt
+from PIL import Image, ImageTk
 
 class ChatUI:
     def __init__(self, root, logged_in_user):
@@ -35,7 +36,7 @@ class ChatUI:
         # Tiêu đề cho danh sách người dùng
         user_list_label = tk.Label(
             user_list_frame,
-            text="Danh sách người dùng",
+            text="Users list",
             font=("Helvetica", 14, "bold"),
             bg="#f5f5f5",
             fg="#333"
@@ -59,13 +60,13 @@ class ChatUI:
             yscrollcommand=scrollbar.set,
             borderwidth=2,
             relief=tk.GROOVE,
-            justify=tk.CENTER
+            justify=tk.CENTER,
         )
         scrollbar.config(command=self.user_listbox.yview)
 
         # Add users to Listbox
         for user in self.users:
-            self.user_listbox.insert(tk.END, user[1])
+            self.user_listbox.insert(tk.END, f"User: {user[1]}")
 
         # Display Listbox and Scrollbar
         self.user_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
@@ -75,24 +76,38 @@ class ChatUI:
         self.user_listbox.bind("<<ListboxSelect>>", self.load_chat)
 
         # Message entry and buttons
-        tk.Label(right_frame, text="Message:", font=("Arial", 12)).grid(row=0, column=0, sticky="w", pady=(10, 5))
+
+        # Load and resize icons
+        img_path_send = os.path.abspath(os.path.join("images", "send.png"))
+        img_path_file = os.path.abspath(os.path.join("images", "file.png"))
+
+        send_image = Image.open(img_path_send)
+        send_image = send_image.resize((30, 30), Image.LANCZOS)
+        self.send_icon = ImageTk.PhotoImage(send_image)
+
+        file_image = Image.open(img_path_file)
+        file_image = file_image.resize((30, 30), Image.LANCZOS)
+        self.file_icon = ImageTk.PhotoImage(file_image)
 
         self.message_entry = tk.Entry(right_frame,
                                       fg="black",
                                       border=2,
-                                        relief=tk.FLAT,
+                                      relief=tk.FLAT,
                                       highlightcolor="blue",
                                       width=50, font=("Arial", 12))
-        self.message_entry.grid(row=0, column=1, pady=(10, 5))
 
-        button_frame = tk.Frame(right_frame)
-        button_frame.grid(row=1, columnspan=2)
+        self.chat_display = tk.Text(right_frame, height=20, width=60, font=("Arial", 12), wrap=tk.WORD)
+        self.chat_display.grid(row=0, columnspan=3, pady=(0, 10))
+        self.message_entry.grid(row=1, column=0, pady=(10, 5), padx=(5, 5), sticky="ew")
 
-        tk.Button(button_frame, text="Send Message", command=self.send_message).pack(side=tk.LEFT, padx=(0, 5))
-        tk.Button(button_frame, text="Send File", command=self.send_file).pack(side=tk.LEFT)
+        send_button = tk.Button(right_frame, command=self.send_message, bg="#fff", fg="white",
+                                font=("Arial", 12, "bold"), bd=0, padx=10, pady=5, image=self.send_icon)
+        send_button.grid(row=1, column=1, pady=(10, 5), padx=(5, 5))
 
-        self.chat_display = tk.Text(right_frame, height=15, width=60, font=("Arial", 12), wrap=tk.WORD)
-        self.chat_display.grid(row=2, columnspan=2, pady=(5, 10))
+        file_button = tk.Button(right_frame, command=self.send_file, bg="#0084ff", fg="white",
+                                font=("Arial", 12, "bold"), bd=0, padx=10, pady=5, image=self.file_icon)
+        file_button.grid(row=1, column=2, pady=(10, 5), padx=(5, 5))
+
 
         # Configure tags for styling messages
         self.chat_display.tag_configure("file", foreground="blue", underline=True)
@@ -113,7 +128,7 @@ class ChatUI:
             if message[4]:  # is_file
                 self.chat_display.insert(tk.END, f"{sender}: Sent a file: {os.path.basename(message[5])}\n", "file")
             else:
-                self.chat_display.insert(tk.END, f"{sender}: {message[3]}\n")
+                self.chat_display.insert(tk.END, f"{sender}: {message[3]}\n", "user_message" if sender == "You" else "other_message")
 
     def send_message(self):
         selected_user_index = self.user_listbox.curselection()
