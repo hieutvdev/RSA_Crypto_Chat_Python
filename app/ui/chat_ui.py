@@ -14,6 +14,7 @@ class ChatUI:
 
     def create_chat_ui(self):
         self.root.title(f"Chat - {self.logged_in_user[1]}")
+        font_button = ("Helvetica", 12, "bold")
 
         # Create frames
         left_frame = tk.Frame(self.root)
@@ -33,7 +34,10 @@ class ChatUI:
         user_list_frame = tk.Frame(left_frame, bg="#f5f5f5", padx=10, pady=10)
         user_list_frame.grid(row=0, column=0, sticky="ns")
 
-        # Tiêu đề cho danh sách người dùng
+        # create button logout
+        logout_button = tk.Button(left_frame, text="Logout", font=font_button, bg="#0084ff", fg="white",
+                                  command=self.open_login_ui)
+        logout_button.grid(row=1, column=0, pady=10)
         user_list_label = tk.Label(
             user_list_frame,
             text="Users list",
@@ -159,14 +163,15 @@ class ChatUI:
         if file_path:
             with open(file_path, 'rb') as file:
                 file_data = file.read()
-                public_key = tuple(map(int, selected_user[5].strip('()').split(', ')))  # Assuming public_key is the sixth element in the tuple
-
+                public_key = tuple(map(int, selected_user[5].strip('()').split(
+                    ', ')))  # Assuming public_key is the sixth element in the tuple
+                print(public_key)
                 # Encrypt the file data using the recipient's public key
                 encrypted_file_data = encrypt(public_key, file_data.decode('utf-8'))
                 encrypted_file_data = ' '.join(map(str, encrypted_file_data)).encode('utf-8')
 
             # Ensure the data directory exists
-            data_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+            data_directory = 'D:/HK7/InformationSecurity/BTL/RSA_Crypto_PyThon/app/data'
             if not os.path.exists(data_directory):
                 os.makedirs(data_directory)
 
@@ -177,9 +182,12 @@ class ChatUI:
 
             # Save the file message in the database
             chat_id = self.get_chat_id(self.logged_in_user[0], selected_user[0])
-            self.user.save_message(chat_id, self.logged_in_user[0], f"Sent a file: {os.path.basename(file_path)}", is_file=True, file_path=encrypted_file_path)
+            self.user.save_message(chat_id, self.logged_in_user[0], f"Sent a file: {os.path.basename(file_path)}",
+                                   is_file=True, file_path=encrypted_file_path)
 
-            self.chat_display.insert(tk.END, f"You (to {selected_user[1]}): Sent a file: {os.path.basename(file_path)}\n", "file")
+            self.chat_display.insert(tk.END,
+                                     f"You (to {selected_user[1]}): Sent a file: {os.path.basename(file_path)}\n",
+                                     "file")
         else:
             messagebox.showerror("Error", "No file selected")
 
@@ -190,16 +198,17 @@ class ChatUI:
 
         # Extract the file name from the line text
         file_name = line_text.split(": ")[-1].strip()
-        encrypted_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', file_name)
+        encrypted_file_path = os.path.join('D:/HK7/InformationSecurity/BTL/RSA_Crypto_PyThon/app/data', file_name)
 
         if os.path.exists(encrypted_file_path):
             with open(encrypted_file_path, 'rb') as file:
                 encrypted_file_data = file.read()
                 encrypted_file_data = list(map(int, encrypted_file_data.decode('utf-8').split()))
                 private_key = tuple(map(int, self.logged_in_user[6].strip('()').split(', ')))
+                print(private_key)
                 decrypted_file_data = decrypt(private_key, encrypted_file_data).encode('utf-8')
 
-            data_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+            data_directory = 'D:/HK7/InformationSecurity/BTL/RSA_Crypto_PyThon/app/data'
             if not os.path.exists(data_directory):
                 os.makedirs(data_directory)
 
@@ -241,3 +250,10 @@ class ChatUI:
         except Exception as e:
             print(f"Error getting or creating chat_id: {e}")
             return None
+
+    def open_login_ui(self):
+        from app.ui.login_ui import LoginUI
+        self.root.destroy()
+        root = tk.Tk()
+        LoginUI(root)
+        root.mainloop()

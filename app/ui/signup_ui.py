@@ -45,7 +45,7 @@ class RegisterUI:
         font_entry = ("Helvetica", 12)
         font_button = ("Helvetica", 12, "bold")
 
-        heading = tk.Label(sub_frame, text="Sign in", fg="#57a1f8", bg="white",
+        heading = tk.Label(sub_frame, text="Sign up", fg="#57a1f8", bg="white",
                            font=("Microsoft YaHei UI Light", 23, "bold"))
         heading.grid(row=0, column=1, columnspan=2, pady=10, sticky="w")
 

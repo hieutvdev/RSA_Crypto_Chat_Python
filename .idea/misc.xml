@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.12 (RSA_Crypto_PyThon)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13 (RSA_Crypto_Chat_Python)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (RSA_Crypto_PyThon)" project-jdk-type="Python SDK" />
 </project>

@@ -3,7 +3,7 @@ class DatabaseConfig:
     """Configuration class for database-related environment variables"""
 
     def __init__(self):
-        self.HOST = "127.0.0.1"
+        self.HOST = "localhost"
         self.PORT = 4406
         self.USER = 'root'
         self.PASSWORD = 'root'
